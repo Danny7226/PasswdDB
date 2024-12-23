@@ -1,8 +1,13 @@
-echo "mvn packaging now"
-
+mvn clean
 mvn package
 
-echo 'Running jar file'
+if [ $? -eq 0 ]; then
+  echo 'Running jar file'
 
-# run server at port 8080
-java -jar target/SecretDB-1.0-SNAPSHOT.jar 8080
+  # run server at port 8080
+  java -jar target/SecretDB-1.0-SNAPSHOT.jar 8080
+else
+    echo "ERROR: mvn package failed, not launching server"
+fi
+
+

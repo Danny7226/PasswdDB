@@ -1,10 +1,13 @@
 package org.secretdb.cryptology;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import java.security.InvalidKeyException;
 
+@Singleton
 public class Crypto {
     private static final byte[] IV = { 8, 8, 8, 8, 4, 4, 4, 4, 2, 2, 2, 2, 1, 0, 1, 0 };
     private static final String SALT = "secret_salt_am_i";
@@ -12,6 +15,7 @@ public class Crypto {
 
     private final IvParameterSpec ivParameterSpec;
 
+    @Inject
     public Crypto() {
         this.ivParameterSpec = CryptoUtil.generateIv(IV);
     }

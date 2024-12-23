@@ -1,12 +1,13 @@
 package org.secretdb.servlet.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.secretdb.cryptology.Crypto;
 import org.secretdb.dao.SecretDB;
-import org.secretdb.dao.impl.OnDiskSecretDB;
+import org.secretdb.dao.SecretDBFactory;
 import org.secretdb.dao.model.Secret;
 import org.secretdb.servlet.http.model.Payload;
 import org.secretdb.util.RequestUtil;
@@ -17,13 +18,14 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ReadWriteServlet extends HttpServlet {
-    // TODO: could be singleton
-    private static final Crypto crypto = new Crypto();
+    @Inject
+    Crypto crypto;
 
-    // TODO: move below to Factory so that we could have one instance per tenant for better servlet isolation and thread safety
-    // Alternatively, have read or write DB instances
-    private static final ObjectMapper om = new ObjectMapper();
-    private static final SecretDB secretDB = new OnDiskSecretDB();
+    @Inject
+    ObjectMapper om;
+
+    @Inject
+    SecretDBFactory secretDBFactory;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -39,6 +41,9 @@ public class ReadWriteServlet extends HttpServlet {
         }
 
         final String privateKey = req.getParameter("key");
+
+        final SecretDB secretDB = secretDBFactory.getSecretDB(tenantId, SecretDBFactory.DB_MODE.READ);
+        System.out.println("Using DB instance " + secretDB);
 
         final Optional<Secret> secretOpt = secretDB.get(tenantId, name);
         if (secretOpt.isPresent()) {
@@ -73,6 +78,9 @@ public class ReadWriteServlet extends HttpServlet {
         // TODO, validate payload so that key and name cannot have white space nor special characters
 
         payload.setValue(crypto.encrypt(payload.getKey(), payload.getValue()));
+
+        final SecretDB secretDB = secretDBFactory.getSecretDB(tenantId, SecretDBFactory.DB_MODE.WRITE);
+        System.out.println("Using DB instance " + secretDB);
 
         secretDB.write(tenantId, payload);
         resp.getWriter().write("POST succeeded!");

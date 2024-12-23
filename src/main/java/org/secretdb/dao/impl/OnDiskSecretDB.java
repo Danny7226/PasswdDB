@@ -1,6 +1,7 @@
 package org.secretdb.dao.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Inject;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.model.Secret;
 import org.secretdb.servlet.http.model.Payload;
@@ -21,7 +22,13 @@ import java.util.function.Function;
  * An implementation of SecretDB interface with on-disk IO
  */
 public class OnDiskSecretDB implements SecretDB {
-    private static final ObjectMapper om = new ObjectMapper();
+
+    private final ObjectMapper om;
+
+    public OnDiskSecretDB(final ObjectMapper om) {
+        this.om = om;
+    }
+
     @Override
     public List<Secret> list(final String tenantId) {
         final String homeDirectory = System.getProperty("user.home");
@@ -99,6 +106,7 @@ public class OnDiskSecretDB implements SecretDB {
     }
 
     // TODO: place write lock when write to prevent dirty writes, read doesn't require lock
+    // This should be mitigated as we partition tenant db into separate files already, but in case rare concurrent modification, this is needed
     private Void updateSecrets(final File file, final Payload payload) {
 
         final List<String> updatedLines = new ArrayList<>();

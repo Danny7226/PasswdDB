@@ -1,7 +1,8 @@
 package org.secretdb;
 
 import com.google.common.base.Preconditions;
-import jakarta.servlet.http.HttpServlet;
+import org.secretdb.module.DaggerSecretDBComponent;
+import org.secretdb.module.SecretDBComponent;
 import org.secretdb.servlet.container.ServletContainer;
 import org.secretdb.servlet.container.impl.TomcatServletContainer;
 import org.secretdb.servlet.http.ListServlet;
@@ -15,10 +16,14 @@ public class SecretDBMain {
         final ServletContainer sc =
                 new TomcatServletContainer(port);
 
-        final HttpServlet listServlet = new ListServlet();
+        final SecretDBComponent daggerComponent = DaggerSecretDBComponent.create();
+
+        final ListServlet listServlet = new ListServlet();
+        daggerComponent.inject(listServlet);
         sc.registerServlet("/api/list/*", listServlet);
 
-        final HttpServlet readWriteServlet = new ReadWriteServlet();
+        final ReadWriteServlet readWriteServlet = new ReadWriteServlet();
+        daggerComponent.inject(readWriteServlet);
         sc.registerServlet("/api/*", readWriteServlet);
 
         // TODO: add scheduled thread to backup secrets file every day/week.
