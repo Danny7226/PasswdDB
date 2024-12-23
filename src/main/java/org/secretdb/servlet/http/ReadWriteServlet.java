@@ -28,19 +28,14 @@ public class ReadWriteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final String tenantId;
+        final String name;
         try {
             tenantId = RequestUtil.getTenantId(req);
+            name = RequestUtil.getName(req);
         } catch (ValidationException e) {
             resp.setStatus(400);
-            resp.getWriter().write("Bad tenant Id");
+            resp.getWriter().write("Bad input, please double check tenant id and make sure name is included as a query parameter");
             return;
-        }
-
-        final String name = req.getParameter("name");
-
-        if (name == null || name.isBlank()) {
-            resp.setStatus(400);
-            resp.getWriter().write("bad input, name needs to present as query parameter");
         }
 
         final String privateKey = req.getParameter("key");

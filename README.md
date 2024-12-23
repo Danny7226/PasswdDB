@@ -12,7 +12,7 @@ For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container 
 ```
 mvn package
 
-java -jar target/SecretDB-1.0-SNAPSHOT.jar 
+java -jar target/SecretDB-1.0-SNAPSHOT.jar $PORT_NUMBER
 ```
 
 or 
