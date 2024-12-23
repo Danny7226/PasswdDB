@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.passwddb.dao.SecretDB;
+import org.passwddb.dao.impl.OnDiskSecretDB;
 import org.passwddb.servlet.http.model.Payload;
 
 import java.io.IOException;
 
 public class ReadWriteServlet extends HttpServlet {
     private static final ObjectMapper om = new ObjectMapper();
+    private static final SecretDB secretDB = new OnDiskSecretDB();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -29,6 +32,8 @@ public class ReadWriteServlet extends HttpServlet {
 
         final Payload payload = getPayload(req);
         System.out.println(payload);
+
+        secretDB.write(tenantId, payload);
         resp.getWriter().write("POST!");
     }
 

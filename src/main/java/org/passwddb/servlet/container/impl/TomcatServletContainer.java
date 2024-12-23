@@ -1,12 +1,10 @@
 package org.passwddb.servlet.container.impl;
 
-import org.apache.catalina.Valve;
 import org.passwddb.servlet.container.ServletContainer;
 
 import org.passwddb.servlet.container.model.ServletContainerException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.Servlet;
-import java.io.File;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
