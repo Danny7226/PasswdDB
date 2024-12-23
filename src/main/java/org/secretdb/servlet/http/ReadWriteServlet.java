@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ReadWriteServlet extends HttpServlet {
+    // TODO: move below to Factory so that we could have one instance per tenant for better servlet isolation and thread safety
     private static final ObjectMapper om = new ObjectMapper();
     private static final SecretDB secretDB = new OnDiskSecretDB();
 
@@ -46,7 +47,7 @@ public class ReadWriteServlet extends HttpServlet {
         // write to a dedicated file for each tenant
 
         final Payload payload = getPayload(req);
-        // TODO, validate payload so that key and name cannot have white space and special characters
+        // TODO, validate payload so that key and name cannot have white space nor special characters
 
         secretDB.write(tenantId, payload);
         resp.getWriter().write("POST succeeded!");
