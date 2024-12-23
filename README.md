@@ -1,6 +1,10 @@
 # PasswdDB
 A simple server that stores password with server-side encryption and tenant specific private key
 
+### Background
+This project is about a servlet container service that stores encrypted password on disk.
+For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container with self-registered servlets
+
 ### Setup
 ```
 git remote add origin https://github.com/Danny7226/PasswdDB.git
@@ -29,11 +33,16 @@ or
 
 ### APIs
 * List
-* 
 ```
-http://localhost:8080/list
+# to list
+curl "http://localhost:8080/api/list/{tenant_id}" 
+
+# to get
+curl "http://localhost:8080/api/{tenant_id}?id={id}&key={key}" 
+
+# to write
+curl -i -X POST http://localhost:8080/api/{tenant_id} -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'
 ```
 
-### Background
-This project is about a servlet container service that stores encrypted password on disk. 
-For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container with self-registered servlets
+### Debug
+* `jar tf target/PasswdDB-1.0-SNAPSHOT.jar` to check all classes packaged in jar
