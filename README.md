@@ -26,6 +26,10 @@ or
 # to list
 curl "http://localhost:8080/api/list/{tenant_id}" 
 
+# to list and grep
+curl "http://localhost:8080/api/list/{tenant_id}" | grep -i "name" 
+curl -s "http://localhost:8080/api/list/{tenant_id}" | grep -i "name" 
+
 # to get
 curl "http://localhost:8080/api/{tenant_id}?name={name}&key={key}" 
 

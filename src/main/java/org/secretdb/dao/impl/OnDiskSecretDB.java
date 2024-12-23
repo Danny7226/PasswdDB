@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -22,8 +23,14 @@ import java.util.function.Function;
 public class OnDiskSecretDB implements SecretDB {
     private static final ObjectMapper om = new ObjectMapper();
     @Override
-    public void list(final String tenantId) {
+    public List<Secret> list(final String tenantId) {
+        final String homeDirectory = System.getProperty("user.home");
+        final String filePath = homeDirectory + "/secret_db/" + tenantId;
+        final File dbFile = new File(filePath);
 
+        if (!dbFile.exists()) return Collections.emptyList();
+
+        return logLatencyAndExecute(arg -> listSecrets(arg), dbFile, "List");
     }
 
     public void getFromSpecifiedFile() {
@@ -38,7 +45,7 @@ public class OnDiskSecretDB implements SecretDB {
 
         if (!dbFile.exists()) return Optional.empty();
 
-        return logLatencyAndExecute(arg -> getSecret(arg, name), dbFile);
+        return logLatencyAndExecute(arg -> getSecret(arg, name), dbFile, "Get");
     }
 
     @Override
@@ -47,16 +54,30 @@ public class OnDiskSecretDB implements SecretDB {
         final String filePath = homeDirectory + "/secret_db/" + tenantId;
         final File dbFile = getOrCreate(filePath);
 
-        logLatencyAndExecute(arg -> updateSecrets(arg, payload), dbFile);
+        logLatencyAndExecute(arg -> updateSecrets(arg, payload), dbFile, "Write");
         updateSecrets(dbFile, payload);
     }
 
-    private <T,R> R logLatencyAndExecute(Function<T, R> func, T input) {
+    private <T,R> R logLatencyAndExecute(Function<T, R> func, T input, final String operationName) {
         final long startTime = System.currentTimeMillis();
         final R res = func.apply(input);
         final long endTime = System.currentTimeMillis();
-        System.out.printf("Operation succeeded in %s ms%n",  (endTime - startTime));
+        System.out.printf("%s Operation succeeded in %s ms%n",  operationName, (endTime - startTime));
         return res;
+    }
+
+    private List<Secret> listSecrets(final File file) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
+            List<Secret> secrets = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                final Secret secret = om.readValue(line, Secret.class);
+                secrets.add(secret);
+            }
+            return secrets;
+        } catch (final IOException e) {
+            throw new RuntimeException("Exception when reading file", e);
+        }
     }
 
     private Optional<Secret> getSecret(final File file, final String name) {
@@ -77,6 +98,7 @@ public class OnDiskSecretDB implements SecretDB {
         }
     }
 
+    // TODO: place write lock when write to prevent dirty writes, read doesn't require lock
     private Void updateSecrets(final File file, final Payload payload) {
 
         final List<String> updatedLines = new ArrayList<>();
