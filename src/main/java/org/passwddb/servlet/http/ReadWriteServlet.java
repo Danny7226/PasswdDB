@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.passwddb.dao.SecretDB;
 import org.passwddb.dao.impl.OnDiskSecretDB;
+import org.passwddb.dao.model.Secret;
 import org.passwddb.servlet.http.model.Payload;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ReadWriteServlet extends HttpServlet {
     private static final ObjectMapper om = new ObjectMapper();
@@ -17,24 +20,37 @@ public class ReadWriteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final String tenantId = getTenantId(req);
-        // TODO: check if tenant exists
 
-        System.out.println("id " + req.getParameter("id"));
+        final String name = req.getParameter("name");
+
+        if (name == null || name.isBlank()) {
+            resp.setStatus(400);
+            resp.getWriter().write("bad input, name needs to present as query parameter");
+        }
+
         System.out.println("key " + req.getParameter("key"));
-        resp.getWriter().write("Get!");
+
+        final Optional<Secret> secretOpt = secretDB.get(tenantId, name);
+        if (secretOpt.isPresent()) {
+            resp.setStatus(200);
+            resp.getWriter().write(om.writeValueAsString(secretOpt.get()));
+        } else {
+            resp.setStatus(404);
+            resp.getWriter().write("Get not found");
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // TODO, have a random Id generated for the name and encrypt value with the key in the payload
+        // TODO, encrypt value with the key in the payload
         final String tenantId = getTenantId(req);
         // write to a dedicated file for each tenant
 
         final Payload payload = getPayload(req);
-        System.out.println(payload);
+        // TODO, validate payload so that key and name cannot have white space and special characters
 
         secretDB.write(tenantId, payload);
-        resp.getWriter().write("POST!");
+        resp.getWriter().write("POST succeeded!");
     }
 
     private Payload getPayload(final HttpServletRequest req) {

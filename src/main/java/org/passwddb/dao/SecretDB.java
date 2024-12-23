@@ -1,11 +1,14 @@
 package org.passwddb.dao;
 
+import org.passwddb.dao.model.Secret;
 import org.passwddb.servlet.http.model.Payload;
 
-public interface SecretDB {
-    public void list();
+import java.util.Optional;
 
-    public void get();
+public interface SecretDB {
+    public void list(final String tenantId);
+
+    public Optional<Secret> get(final String tenantId, final String name);
 
     public void write(final String tenantId, final Payload payload);
 }

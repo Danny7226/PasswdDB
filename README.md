@@ -27,7 +27,7 @@ or
 curl "http://localhost:8080/api/list/{tenant_id}" 
 
 # to get
-curl "http://localhost:8080/api/{tenant_id}?id={id}&key={key}" 
+curl "http://localhost:8080/api/{tenant_id}?name={name}&key={key}" 
 
 # to write
 curl -i -X POST http://localhost:8080/api/duochai -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'

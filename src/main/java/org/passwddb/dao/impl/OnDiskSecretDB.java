@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -23,7 +24,7 @@ import java.util.function.Function;
 public class OnDiskSecretDB implements SecretDB {
     private static final ObjectMapper om = new ObjectMapper();
     @Override
-    public void list() {
+    public void list(final String tenantId) {
 
     }
 
@@ -32,15 +33,20 @@ public class OnDiskSecretDB implements SecretDB {
     }
 
     @Override
-    public void get() {
+    public Optional<Secret> get(final String tenantId, final String name) {
+        final String homeDirectory = System.getProperty("user.home");
+        final String filePath = homeDirectory + "/secret_db/" + tenantId;
+        final File dbFile = new File(filePath);
 
+        if (!dbFile.exists()) return Optional.empty();
+
+        return logLatencyAndExecute(arg -> getSecret(arg, name), dbFile);
     }
 
     @Override
     public void write(final String tenantId, final Payload payload) {
         final String homeDirectory = System.getProperty("user.home");
         final String filePath = homeDirectory + "/secret_db/" + tenantId;
-
         final File dbFile = getOrCreate(filePath);
 
         logLatencyAndExecute(arg -> updateSecrets(arg, payload), dbFile);
@@ -51,8 +57,26 @@ public class OnDiskSecretDB implements SecretDB {
         final long startTime = System.currentTimeMillis();
         final R res = func.apply(input);
         final long endTime = System.currentTimeMillis();
-        System.out.println("File updated successfully in " + (endTime - startTime) + " ms");
+        System.out.printf("Operation succeeded in %s ms%n",  (endTime - startTime));
         return res;
+    }
+
+    private Optional<Secret> getSecret(final File file, final String name) {
+        Secret secret;
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                secret = om.readValue(line, Secret.class);
+                if (secret.getName().equals(name)) {
+                    return Optional.of(secret);
+                }
+            }
+
+            // no-found
+            return Optional.empty();
+        } catch (final IOException e) {
+            throw new RuntimeException("Exception when reading file", e);
+        }
     }
 
     private Void updateSecrets(final File file, final Payload payload) {
