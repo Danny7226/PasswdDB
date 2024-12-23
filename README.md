@@ -14,8 +14,7 @@ git config user.email "duochai9611@gmail.com"
 git push origin HEAD:mainline
 ```
 
-
-### Run
+### Spin up server
 ```
 mvn package
 
@@ -27,3 +26,14 @@ or
 ```
 ./start_server.sh
 ```
+
+### APIs
+* List
+* 
+```
+http://localhost:8080/list
+```
+
+### Background
+This project is about a servlet container service that stores encrypted password on disk. 
+For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container with self-registered servlets
