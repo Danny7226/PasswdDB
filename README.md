@@ -22,7 +22,6 @@ or
 ```
 
 ### APIs
-* List
 ```
 # to list
 curl "http://localhost:8080/api/list/{tenant_id}" 
@@ -39,7 +38,7 @@ curl -i -X POST http://localhost:8080/api/duochai -H "Content-Type: application/
 
 ### Contribute
 ```
-git remote add origin https://github.com/Danny7226/PasswdDB.git
+git remote add origin https://github.com/Danny7226/SecretDB.git
 git branch -u origin/mainline master
 git config --list
 
