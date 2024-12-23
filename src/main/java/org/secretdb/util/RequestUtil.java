@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 public class RequestUtil {
-    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
+    private static final Logger logger = LogManager.getLogger(RequestUtil.class);
 
     private static final Pattern TENANT_ID_REGEX_PATTERN = Pattern.compile("^/[a-zA-Z0-9_-]+$");
 

@@ -25,8 +25,8 @@ import java.util.function.Function;
  * An implementation of SecretDB interface with on-disk IO
  */
 public class OnDiskSecretDB implements SecretDB {
-    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
-
+    private static final Logger logger = LogManager.getLogger(OnDiskSecretDB.class);
+    private static final String HOME_DIRECTORY = System.getProperty("user.home");
     private final ObjectMapper om;
 
     public OnDiskSecretDB(final ObjectMapper om) {
@@ -35,8 +35,7 @@ public class OnDiskSecretDB implements SecretDB {
 
     @Override
     public List<Secret> list(final String tenantId) {
-        final String homeDirectory = System.getProperty("user.home");
-        final String filePath = homeDirectory + "/secret_db/" + tenantId;
+        final String filePath = HOME_DIRECTORY + "/secret_db/data/" + tenantId;
         final File dbFile = new File(filePath);
 
         if (!dbFile.exists()) return Collections.emptyList();
@@ -50,8 +49,7 @@ public class OnDiskSecretDB implements SecretDB {
 
     @Override
     public Optional<Secret> get(final String tenantId, final String name) {
-        final String homeDirectory = System.getProperty("user.home");
-        final String filePath = homeDirectory + "/secret_db/" + tenantId;
+        final String filePath = HOME_DIRECTORY + "/secret_db/data/" + tenantId;
         final File dbFile = new File(filePath);
 
         if (!dbFile.exists()) return Optional.empty();
@@ -61,8 +59,7 @@ public class OnDiskSecretDB implements SecretDB {
 
     @Override
     public void write(final String tenantId, final Payload payload) {
-        final String homeDirectory = System.getProperty("user.home");
-        final String filePath = homeDirectory + "/secret_db/" + tenantId;
+        final String filePath = HOME_DIRECTORY + "/secret_db/data/" + tenantId;
         final File dbFile = getOrCreate(filePath);
 
         logLatencyAndExecute(arg -> updateSecrets(arg, payload), dbFile, "Write");

@@ -1,5 +1,8 @@
 package org.secretdb.servlet.container.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.secretdb.SecretDBMain;
 import org.secretdb.servlet.container.ServletContainer;
 
 import org.secretdb.servlet.container.model.ServletContainerException;
@@ -12,6 +15,7 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
 public class TomcatServletContainer implements ServletContainer {
+    private final Logger logger = LogManager.getLogger(TomcatServletContainer.class);
 
     private final Tomcat tomcat;
     private final Context context;
@@ -45,6 +49,7 @@ public class TomcatServletContainer implements ServletContainer {
     public void startAndAwait() throws ServletContainerException {
         try {
             this.tomcat.start();
+            logger.info("Tomcat server started, blocking the main thread and listening...");
             this.tomcat.getServer().await();
         } catch (final LifecycleException e) {
             throw new ServletContainerException("Error starting servlet container", e);

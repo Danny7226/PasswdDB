@@ -1,6 +1,10 @@
 package org.secretdb;
 
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Uninterruptibles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.secretdb.scheduled.BackupWorker;
 import org.secretdb.module.DaggerSecretDBComponent;
 import org.secretdb.module.SecretDBComponent;
 import org.secretdb.servlet.container.ServletContainer;
@@ -8,7 +12,12 @@ import org.secretdb.servlet.container.impl.TomcatServletContainer;
 import org.secretdb.servlet.http.ListServlet;
 import org.secretdb.servlet.http.ReadWriteServlet;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class SecretDBMain {
+
     public static void main(String[] args) {
         int port = Integer.parseInt(args[0]);
         Preconditions.checkArgument(port > 1024, "Port number must be higher than 1024");
@@ -26,9 +35,27 @@ public class SecretDBMain {
         daggerComponent.inject(readWriteServlet);
         sc.registerServlet("/api/*", readWriteServlet);
 
-        // TODO: add scheduled thread to backup secrets file every day/week.
-        // Ideally, it could be a separate daemon service itself. But for simplicity, having it within this project for now
+        // Ideally, scheduled-threads could be a separate daemon service itself. But for simplicity, having it within this project for now
+        scheduleWorkerForBackupAndStartServer(sc);
+    }
 
-        sc.startAndAwait();
+    private static void scheduleWorkerForBackupAndStartServer(final ServletContainer sc) {
+        final Logger logger = LogManager.getLogger(SecretDBMain.class);
+
+        // TODO: have a clean up work that cleans up application_log more than 7 days. Backup cleanup can be dangerous as no monitoring on the in-use file.
+        // Override default thread factory to create daemon thread for back-up worker as it's non-critical and shouldn't block jvm shutting up
+        try (final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, runnable -> {
+            Thread thread = new Thread(runnable);
+            thread.setDaemon(true);
+            return thread;
+        })) {
+            logger.info("Scheduling backup daemon worker thread...");
+            executorService.scheduleWithFixedDelay(new BackupWorker(), 0, 1, TimeUnit.MINUTES);
+            logger.info("Backup daemon worker scheduled, spinning up server...");
+            sc.startAndAwait();
+        } finally {
+            logger.fatal("For unknown reasons, main thread exits. This is unexpected. Sleeping for 5000 ms before exiting.");
+            Uninterruptibles.sleepUninterruptibly(5000, TimeUnit.MILLISECONDS);
+        }
     }
 }

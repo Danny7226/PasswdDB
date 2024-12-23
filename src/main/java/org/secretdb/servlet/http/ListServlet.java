@@ -18,7 +18,7 @@ import java.util.List;
 
 
 public class ListServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
+    private static final Logger logger = LogManager.getLogger(ListServlet.class);
 
     @Inject
     SecretDBFactory secretDBFactory;

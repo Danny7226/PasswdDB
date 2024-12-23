@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ReadWriteServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
+    private static final Logger logger = LogManager.getLogger(ReadWriteServlet.class);
 
     @Inject
     Crypto crypto;
