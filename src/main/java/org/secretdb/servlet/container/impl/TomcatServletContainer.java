@@ -41,6 +41,7 @@ public class TomcatServletContainer implements ServletContainer {
         this.context.addServletMappingDecoded(path, servletName);
     }
 
+    @Override
     public void startAndAwait() throws ServletContainerException {
         try {
             this.tomcat.start();
@@ -50,6 +51,7 @@ public class TomcatServletContainer implements ServletContainer {
         }
     }
 
+    @Override
     public void stop() throws ServletContainerException {
         try {
             this.tomcat.stop();
