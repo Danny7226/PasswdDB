@@ -8,6 +8,17 @@ This project sets/spins up a servlet container service that stores encrypted sec
 
 For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container with self-registered servlets
 
+### Key functional features in this service
+* Get/List/POST apis
+* Persistent logs to dedicated log files
+* Scheduled workers that backs up datafile once every day
+
+### Key technical features in this service
+* Tomcat 10.x
+* OpenJDK21
+* Compile-time IoC with Google Dagger
+* Log4j2 2.24.3
+
 ### Spin up server
 ```
 mvn package

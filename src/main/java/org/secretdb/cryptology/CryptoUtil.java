@@ -1,5 +1,8 @@
 package org.secretdb.cryptology;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -18,6 +21,8 @@ import java.security.spec.KeySpec;
 import java.util.Base64;
 
 public class CryptoUtil {
+    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
+
     public static String encrypt(String algorithm, String input, SecretKey key, IvParameterSpec iv) {
         try {
             final Cipher cipher = Cipher.getInstance(algorithm);
@@ -42,7 +47,7 @@ public class CryptoUtil {
      */
     public static String decrypt(String algorithm, String cipherText, SecretKey key, IvParameterSpec iv) throws BadPaddingException {
         try {
-            System.out.println("Decrypting encoded cipher " + cipherText);
+            logger.info("Decrypting encoded cipher " + cipherText);
             final Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
             final byte[] decoded = Base64.getDecoder().decode(cipherText);

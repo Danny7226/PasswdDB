@@ -1,10 +1,12 @@
 package org.secretdb.servlet.http;
 
-import dagger.Component;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.secretdb.cryptology.CryptoUtil;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.SecretDBFactory;
 import org.secretdb.dao.model.Secret;
@@ -16,6 +18,7 @@ import java.util.List;
 
 
 public class ListServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
 
     @Inject
     SecretDBFactory secretDBFactory;
@@ -30,11 +33,12 @@ public class ListServlet extends HttpServlet {
         } catch (ValidationException e) {
             resp.setStatus(400);
             resp.getWriter().write("Bad tenant Id");
+            logger.warn("{} is a bad input, tenant related, I am returning 4xx", req.getPathInfo());
             return;
         }
 
         final SecretDB secretDB = secretDBFactory.getSecretDB(tenantId, SecretDBFactory.DB_MODE.READ);
-        System.out.println("Using DB instance " + secretDB);
+        logger.info("Using DB instance " + secretDB);
 
         final List<Secret> secretList = secretDB.list(tenantId);
         resp.setStatus(200);

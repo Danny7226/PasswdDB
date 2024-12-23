@@ -2,6 +2,9 @@ package org.secretdb.dao.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.secretdb.cryptology.CryptoUtil;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.model.Secret;
 import org.secretdb.servlet.http.model.Payload;
@@ -22,6 +25,7 @@ import java.util.function.Function;
  * An implementation of SecretDB interface with on-disk IO
  */
 public class OnDiskSecretDB implements SecretDB {
+    private static final Logger logger = LogManager.getLogger(CryptoUtil.class);
 
     private final ObjectMapper om;
 
@@ -69,7 +73,7 @@ public class OnDiskSecretDB implements SecretDB {
         final long startTime = System.currentTimeMillis();
         final R res = func.apply(input);
         final long endTime = System.currentTimeMillis();
-        System.out.printf("%s Operation succeeded in %s ms%n",  operationName, (endTime - startTime));
+        logger.info("{} Operation succeeded in {} ms",  operationName, (endTime - startTime));
         return res;
     }
 
@@ -83,6 +87,7 @@ public class OnDiskSecretDB implements SecretDB {
             }
             return secrets;
         } catch (final IOException e) {
+            logger.error("Exception when reading file {}", e.toString());
             throw new RuntimeException("Exception when reading file", e);
         }
     }
@@ -101,6 +106,7 @@ public class OnDiskSecretDB implements SecretDB {
             // no-found
             return Optional.empty();
         } catch (final IOException e) {
+            logger.error("Exception when reading file {}", e.toString());
             throw new RuntimeException("Exception when reading file", e);
         }
     }
@@ -134,6 +140,7 @@ public class OnDiskSecretDB implements SecretDB {
                                 .build()));
             }
         } catch (final IOException e) {
+            logger.error("Exception when reading file {}", e.toString());
             throw new RuntimeException("Exception when reading file", e);
         }
 
@@ -144,6 +151,7 @@ public class OnDiskSecretDB implements SecretDB {
                 writer.newLine();
             }
         } catch (final IOException e) {
+            logger.error("Exception when writing file {}", e.toString());
             throw new RuntimeException("Exception when writing file", e);
         }
         return null;
@@ -157,21 +165,22 @@ public class OnDiskSecretDB implements SecretDB {
             final File parentDir = file.getParentFile();
             if (parentDir != null && !parentDir.exists()) {
                 if (parentDir.mkdirs()) {
-                    System.out.println("Parent directories created successfully. " + parentDir.getAbsolutePath());
+                    logger.info("Parent directories created successfully. " + parentDir.getAbsolutePath());
                 } else {
-                    System.out.println("Failed to create parent directories. " + parentDir.getAbsolutePath());
+                    logger.info("Failed to create parent directories. " + parentDir.getAbsolutePath());
                 }
             }
 
             // Create the file
             if (file.createNewFile()) {
-                System.out.println("File created successfully at: " + file.getAbsolutePath());
+                logger.info("File created successfully at: " + file.getAbsolutePath());
             } else {
-                System.out.println("File already exists at: " + file.getAbsolutePath());
+                logger.info("File already exists at: " + file.getAbsolutePath());
             }
 
             return file;
         } catch (IOException e) {
+            logger.error("Exception when creating new file {}", e.toString());
             throw new RuntimeException("Error creating db file", e);
         }
     }
