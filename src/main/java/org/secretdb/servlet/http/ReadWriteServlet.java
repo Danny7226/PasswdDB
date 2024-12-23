@@ -4,15 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.secretdb.cryptology.Crypto;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.impl.OnDiskSecretDB;
 import org.secretdb.dao.model.Secret;
 import org.secretdb.servlet.http.model.Payload;
 
+import javax.crypto.BadPaddingException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.util.Optional;
 
 public class ReadWriteServlet extends HttpServlet {
+    // TODO: could be singleton
+    private static final Crypto crypto = new Crypto();
+
     // TODO: move below to Factory so that we could have one instance per tenant for better servlet isolation and thread safety
     private static final ObjectMapper om = new ObjectMapper();
     private static final SecretDB secretDB = new OnDiskSecretDB();
@@ -28,12 +34,19 @@ public class ReadWriteServlet extends HttpServlet {
             resp.getWriter().write("bad input, name needs to present as query parameter");
         }
 
-        System.out.println("key " + req.getParameter("key"));
+        final String privateKey = req.getParameter("key");
 
         final Optional<Secret> secretOpt = secretDB.get(tenantId, name);
         if (secretOpt.isPresent()) {
-            resp.setStatus(200);
-            resp.getWriter().write(om.writeValueAsString(secretOpt.get()));
+            final String secret = secretOpt.get().getValue();
+            try {
+                final String decrypted = crypto.decrypt(privateKey, secret);
+                resp.setStatus(200);
+                resp.getWriter().write(decrypted);
+            } catch (final BadPaddingException e) {
+                resp.setStatus(400);
+                resp.getWriter().write("Bad input");
+            }
         } else {
             resp.setStatus(404);
             resp.getWriter().write("Get not found");
@@ -48,6 +61,8 @@ public class ReadWriteServlet extends HttpServlet {
 
         final Payload payload = getPayload(req);
         // TODO, validate payload so that key and name cannot have white space nor special characters
+
+        payload.setValue(crypto.encrypt(payload.getKey(), payload.getValue()));
 
         secretDB.write(tenantId, payload);
         resp.getWriter().write("POST succeeded!");
