@@ -41,7 +41,7 @@ curl "http://localhost:8080/api/list/{tenant_id}"
 curl "http://localhost:8080/api/{tenant_id}?id={id}&key={key}" 
 
 # to write
-curl -i -X POST http://localhost:8080/api/{tenant_id} -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'
+curl -i -X POST http://localhost:8080/api/duochai -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'
 ```
 
 ### Debug
