@@ -1,16 +1,15 @@
-package org.passwddb.servlet.http;
+package org.secretdb.servlet.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.passwddb.dao.SecretDB;
-import org.passwddb.dao.impl.OnDiskSecretDB;
-import org.passwddb.dao.model.Secret;
-import org.passwddb.servlet.http.model.Payload;
+import org.secretdb.dao.SecretDB;
+import org.secretdb.dao.impl.OnDiskSecretDB;
+import org.secretdb.dao.model.Secret;
+import org.secretdb.servlet.http.model.Payload;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 public class ReadWriteServlet extends HttpServlet {

@@ -1,7 +1,7 @@
-package org.passwddb.dao;
+package org.secretdb.dao;
 
-import org.passwddb.dao.model.Secret;
-import org.passwddb.servlet.http.model.Payload;
+import org.secretdb.dao.model.Secret;
+import org.secretdb.servlet.http.model.Payload;
 
 import java.util.Optional;
 

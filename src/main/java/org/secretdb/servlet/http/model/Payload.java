@@ -1,4 +1,4 @@
-package org.passwddb.servlet.http.model;
+package org.secretdb.servlet.http.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package org.passwddb.servlet.container;
+package org.secretdb.servlet.container;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.Servlet;

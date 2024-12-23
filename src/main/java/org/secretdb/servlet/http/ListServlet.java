@@ -1,4 +1,4 @@
-package org.passwddb.servlet.http;
+package org.secretdb.servlet.http;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

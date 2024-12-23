@@ -1,4 +1,4 @@
-package org.passwddb.servlet.container.model;
+package org.secretdb.servlet.container.model;
 
 public class ServletContainerException extends RuntimeException {
     public ServletContainerException(final String message, final Throwable throwable) {

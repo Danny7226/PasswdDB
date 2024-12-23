@@ -1,17 +1,18 @@
-# PasswdDB
-A simple server that stores password with server-side encryption using tenant-specified private key;
+# SecretDB
+A simple server that stores secrets with server-side encryption using tenant-specified private key;
 
-For security, either use it within your localhost, or always use **https** when running this server on a remote env
+For security, either use it within your localhost, or always use **https** when running this server on a remote desktop
 
 ### Background
-This project is about a servlet container service that stores encrypted password on disk.
+This project sets/spins up a servlet container service that stores encrypted secrets on disk.
+
 For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container with self-registered servlets
 
 ### Spin up server
 ```
 mvn package
 
-java -jar target/PasswdDB-1.0-SNAPSHOT.jar 
+java -jar target/SecretDB-1.0-SNAPSHOT.jar 
 ```
 
 or 
@@ -34,7 +35,7 @@ curl -i -X POST http://localhost:8080/api/duochai -H "Content-Type: application/
 ```
 
 ### Debug
-* `jar tf target/PasswdDB-1.0-SNAPSHOT.jar` to check all classes packaged in jar
+* `jar tf target/SecretDB-1.0-SNAPSHOT.jar` to check all classes packaged in jar
 
 ### Contribute
 ```

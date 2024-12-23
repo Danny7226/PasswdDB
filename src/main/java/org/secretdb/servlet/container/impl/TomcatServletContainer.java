@@ -1,8 +1,8 @@
-package org.passwddb.servlet.container.impl;
+package org.secretdb.servlet.container.impl;
 
-import org.passwddb.servlet.container.ServletContainer;
+import org.secretdb.servlet.container.ServletContainer;
 
-import org.passwddb.servlet.container.model.ServletContainerException;
+import org.secretdb.servlet.container.model.ServletContainerException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.Servlet;
 

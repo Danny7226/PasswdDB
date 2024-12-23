@@ -1,12 +1,12 @@
-package org.passwddb;
+package org.secretdb;
 
 import jakarta.servlet.http.HttpServlet;
-import org.passwddb.servlet.container.ServletContainer;
-import org.passwddb.servlet.container.impl.TomcatServletContainer;
-import org.passwddb.servlet.http.ListServlet;
-import org.passwddb.servlet.http.ReadWriteServlet;
+import org.secretdb.servlet.container.ServletContainer;
+import org.secretdb.servlet.container.impl.TomcatServletContainer;
+import org.secretdb.servlet.http.ListServlet;
+import org.secretdb.servlet.http.ReadWriteServlet;
 
-public class PasswordDBMain {
+public class SecretDBMain {
     public static void main(String[] args) {
         int port = Integer.parseInt(args[0]);
         final ServletContainer tomcat =

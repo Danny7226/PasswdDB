@@ -1,4 +1,4 @@
-package org.passwddb.dao.model;
+package org.secretdb.dao.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
