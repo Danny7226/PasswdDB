@@ -1,0 +1,29 @@
+export SECRET_DB_TENANT={your_tenant_id_here}
+export SECRET_DB_PRIVATE_KEY={your_private_key_here}
+
+secret_db() {
+  if [ "$1" = "ls" ]; then
+    curl "http://localhost:8080/api/list/$SECRET_DB_TENANT"
+  elif [ "$1" = "r" ]; then
+    if [ -z "$2" ]; then
+      echo "Error: 'r' requires one additional argument (name)"
+    else
+      name=$2
+      curl -X POST http://localhost:8080/api/$SECRET_DB_TENANT -H "Content-Type: application/json" -d '{"key":"'$SECRET_DB_PRIVATE_KEY'", "name":"'$name'"}'
+    fi
+  elif [ "$1" = "w" ]; then
+    if [ -z "$2" ] || [ -z "$3" ]; then
+      echo "Error: 'w' requires two additional arguments (name, and value)"
+    else
+      name=$2
+      value=$3
+      curl -i -X PUT http://localhost:8080/api/$SECRET_DB_TENANT -H "Content-Type: application/json" -d '{"key":"'$SECRET_DB_PRIVATE_KEY'", "name":"'$name'", "value":"'$value'"}'
+    fi
+  else
+    echo "Invalid argument: $1"
+  fi
+}
+
+sdb() {
+  secret_db "$@"
+}

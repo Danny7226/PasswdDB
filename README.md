@@ -63,6 +63,19 @@ curl -X POST http://localhost:8080/api/duochai -H "Content-Type: application/jso
 curl -i -X PUT http://localhost:8080/api/duochai -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'
 ```
 
+### As a client
+* This is a file named "client" at the root directory of this git repo.
+* Look for it and move it outside of this git repo.
+* Update `SECRET_DB_TENANT` and `SECRET_DB_PRIVATE_KEY`, then source file `source /path/to/your/file` at the end of your shell profile, e.g. `~/.zshrc`
+* After which, use cmd below
+```
+sdb ls # list all secrects
+
+sdb r "test record" # read/get a secret with private_key specified on file
+
+sdb w "new record" "sec1:abc sec_a:bcsd" # write a new secret named "new record" with a value
+```
+
 ### Debug
 * `jar tf target/SecretDB-1.0-SNAPSHOT.jar` to check all classes packaged in jar
 
