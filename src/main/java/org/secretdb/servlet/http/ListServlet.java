@@ -43,7 +43,7 @@ public class ListServlet extends HttpServlet {
         final List<Secret> secretList = secretDB.list(tenantId);
         resp.setStatus(200);
         for (final Secret secret: secretList) {
-            resp.getWriter().println(secret.getName() + " " + secret.getPrivate_key_hash());
+            resp.getWriter().println(secret.getName());
         }
     }
 }

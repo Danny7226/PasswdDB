@@ -122,6 +122,7 @@ public class OnDiskSecretDB implements SecretDB {
                 if (onFile.getName().equals(toUpdate.getName())) {
                     isExisting = true;
                     onFile.setValue(toUpdate.getValue());
+                    onFile.setPrivate_key_hash(toUpdate.getPrivate_key_hash());
                     updatedLines.add(om.writeValueAsString(onFile));
                 } else {
                     updatedLines.add(line);
