@@ -11,16 +11,18 @@ For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container 
 ### Key functional features in this service
 * Get/List/POST apis
 * Persistent logs to dedicated log files
-* Scheduled workers that backs up datafile once every day
+* Scheduled daemon that backs up datafile once every day
+* Scheduled daemon that cleans up application logs earlier than 2 days ago
 * All files (data, logs, backup) are stored under `${system:user.home}/secret_db/` folder
   * In linux, it's `/home/duochai/secret_db`
   * In MacOs, it's `/Users/duochai/secret_db`
 
 ### Key technical features in this service
 * Tomcat 10.x
-* OpenJDK21
+* OpenJDK 21
 * Compile-time IoC with Google Dagger
 * Log4j2 2.24.3
+* Daemon threads
 
 ### Spin up server
 If you don't have jdk21 installed
