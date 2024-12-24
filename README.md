@@ -1,5 +1,5 @@
 # SecretDB
-A simple server that stores secrets with server-side encryption using tenant-specified private key;
+A simple server that stores secrets on-disk with server-side encryption using tenant-specified private key;
 
 For security, either use it within your localhost, or always use **https** when running this server on a remote desktop
 
@@ -9,7 +9,8 @@ This project sets/spins up a servlet container service that stores encrypted sec
 For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container with self-registered servlets
 
 ### Key functional features in this service
-* Get/List/POST apis
+* Get/List/PUT apis
+* Store secrets on-disk encrypted
 * Persistent logs to dedicated log files
 * Scheduled daemon that backs up datafile once every day
 * Scheduled daemon that cleans up application logs earlier than 2 days ago
@@ -23,6 +24,7 @@ For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container 
 * Compile-time IoC with Google Dagger
 * Log4j2 2.24.3
 * Daemon threads
+* Java crypto AES
 
 ### Spin up server
 If you don't have jdk21 installed
