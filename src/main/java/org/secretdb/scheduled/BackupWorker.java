@@ -32,7 +32,6 @@ public class BackupWorker implements Runnable{
 
     private final AtomicLong currentIteration = new AtomicLong(0L);
 
-
     /**
      * Runs this operation.
      */

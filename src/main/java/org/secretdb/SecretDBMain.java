@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.secretdb.scheduled.BackupWorker;
 import org.secretdb.module.DaggerSecretDBComponent;
 import org.secretdb.module.SecretDBComponent;
+import org.secretdb.scheduled.CleanupWorker;
 import org.secretdb.servlet.container.ServletContainer;
 import org.secretdb.servlet.container.impl.TomcatServletContainer;
 import org.secretdb.servlet.http.ListServlet;
@@ -44,14 +45,15 @@ public class SecretDBMain {
 
         // TODO: have a clean up work that cleans up application_log more than 7 days. Backup cleanup can be dangerous as no monitoring on the in-use file.
         // Override default thread factory to create daemon thread for back-up worker as it's non-critical and shouldn't block jvm shutting up
-        try (final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, runnable -> {
+        try (final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2, runnable -> {
             Thread thread = new Thread(runnable);
             thread.setDaemon(true);
             return thread;
         })) {
-            logger.info("Scheduling backup daemon worker thread...");
-            executorService.scheduleWithFixedDelay(new BackupWorker(), 0, 30, TimeUnit.MINUTES);
-            logger.info("Backup daemon worker scheduled, spinning up server...");
+            logger.info("Scheduling backup and cleanup daemon worker threads...");
+            executorService.scheduleWithFixedDelay(new BackupWorker(), 1, 30, TimeUnit.MINUTES);
+            executorService.scheduleWithFixedDelay(new CleanupWorker(), 2, 30, TimeUnit.MINUTES);
+            logger.info("Daemon workers scheduled, spinning up server...");
             sc.startAndAwait();
         } finally {
             logger.fatal("For unknown reasons, main thread exits. This is unexpected. Sleeping for 5000 ms before exiting.");
