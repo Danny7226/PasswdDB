@@ -12,6 +12,9 @@ For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container 
 * Get/List/POST apis
 * Persistent logs to dedicated log files
 * Scheduled workers that backs up datafile once every day
+* All files (data, logs, backup) are stored under `${system:user.home}/secret_db/` folder
+  * In linux, it's `/home/duochai/secret_db`
+  * In MacOs, it's `/Users/duochai/secret_db`
 
 ### Key technical features in this service
 * Tomcat 10.x
@@ -21,7 +24,6 @@ For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container 
 
 ### Spin up server
 If you don't have jdk21 installed
-
 ```
 wget https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
 
@@ -32,6 +34,7 @@ export JAVA_HOME=/opt/jdk-21
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
+Run below to spin up
 ```
 mvn package
 
