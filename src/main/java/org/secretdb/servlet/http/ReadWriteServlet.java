@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.secretdb.cryptology.Crypto;
-import org.secretdb.cryptology.CryptoUtil;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.SecretDBFactory;
 import org.secretdb.dao.model.Secret;
@@ -33,35 +32,33 @@ public class ReadWriteServlet extends HttpServlet {
     SecretDBFactory secretDBFactory;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final String tenantId;
-        final String name;
         try {
             tenantId = RequestUtil.getTenantId(req);
-            name = RequestUtil.getName(req);
         } catch (ValidationException e) {
             resp.setStatus(400);
-            resp.getWriter().write("Bad input, please double check tenant id and make sure name is included as a query parameter");
-            logger.warn("{} is a bad input, tenant or name parameter related, I am returning 4xx", req.getQueryString());
+            resp.getWriter().write("Bad tenant Id");
+            logger.warn("{} is a bad input, tenant related, I am returning 4xx", req.toString());
             return;
         }
 
-        final String privateKey = req.getParameter("key");
+        final Payload payload = getPayload(req);
 
         final SecretDB secretDB = secretDBFactory.getSecretDB(tenantId, SecretDBFactory.DB_MODE.READ);
         logger.info("Using DB instance " + secretDB);
 
-        final Optional<Secret> secretOpt = secretDB.get(tenantId, name);
+        final Optional<Secret> secretOpt = secretDB.get(tenantId, payload.getName());
         if (secretOpt.isPresent()) {
             final String secret = secretOpt.get().getValue();
             try {
-                final String decrypted = crypto.decrypt(privateKey, secret);
+                final String decrypted = crypto.decrypt(payload.getKey(), secret);
                 resp.setStatus(200);
                 resp.getWriter().write(decrypted);
             } catch (final BadPaddingException e) {
                 resp.setStatus(400);
                 resp.getWriter().write("Bad input");
-                logger.warn("{} is a bad input, private key not correct, I am returning 4xx", req.getQueryString());
+                logger.warn("Request on secret {} has a bad input, private key not correct, I am returning 4xx", payload.getName());
             }
         } else {
             resp.setStatus(404);
@@ -70,7 +67,7 @@ public class ReadWriteServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final String tenantId;
         try {
             tenantId = RequestUtil.getTenantId(req);
@@ -88,7 +85,7 @@ public class ReadWriteServlet extends HttpServlet {
         logger.info("Using DB instance " + secretDB);
 
         secretDB.write(tenantId, payload);
-        resp.getWriter().write("POST succeeded!");
+        resp.getWriter().write("Write succeeded!");
     }
 
     private Payload getPayload(final HttpServletRequest req) {

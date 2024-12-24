@@ -70,7 +70,7 @@ public class OnDiskSecretDB implements SecretDB {
         final long startTime = System.currentTimeMillis();
         final R res = func.apply(input);
         final long endTime = System.currentTimeMillis();
-        logger.info("{} Operation succeeded in {} ms",  operationName, (endTime - startTime));
+        logger.info("{} DB operation succeeded in {} ms",  operationName, (endTime - startTime));
         return res;
     }
 

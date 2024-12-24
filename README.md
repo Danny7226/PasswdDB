@@ -57,10 +57,10 @@ curl "http://localhost:8080/api/list/{tenant_id}" | grep -i "name"
 curl -s "http://localhost:8080/api/list/{tenant_id}" | grep -i "name" 
 
 # to get
-curl "http://localhost:8080/api/{tenant_id}?name={name}&key={key}" 
+curl -X POST http://localhost:8080/api/duochai -H "Content-Type: application/json" -d '{"key":"key1", "name":"name"}' 
 
 # to write
-curl -i -X POST http://localhost:8080/api/duochai -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'
+curl -i -X PUT http://localhost:8080/api/duochai -H "Content-Type: application/json" -d '{"key":"key1", "name":"name", "value": "value"}'
 ```
 
 ### Debug

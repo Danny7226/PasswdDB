@@ -21,7 +21,7 @@ public class RequestUtil {
         }
 
         final String tenantId = req.getPathInfo().replaceFirst("^/", ""); // remove prefixing "/"
-        logger.info("Tenant " + tenantId);
+        logger.info("========Tenant " + tenantId + "=========");
 
         return tenantId;
     }
