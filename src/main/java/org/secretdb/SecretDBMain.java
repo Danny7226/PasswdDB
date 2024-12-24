@@ -50,7 +50,7 @@ public class SecretDBMain {
             return thread;
         })) {
             logger.info("Scheduling backup daemon worker thread...");
-            executorService.scheduleWithFixedDelay(new BackupWorker(), 0, 1, TimeUnit.MINUTES);
+            executorService.scheduleWithFixedDelay(new BackupWorker(), 0, 30, TimeUnit.MINUTES);
             logger.info("Backup daemon worker scheduled, spinning up server...");
             sc.startAndAwait();
         } finally {
