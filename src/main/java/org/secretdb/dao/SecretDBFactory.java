@@ -4,15 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import org.secretdb.dao.impl.OnDiskSecretDB;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SecretDBFactory {
     private final Map<String, SecretDB> table;
     private final ObjectMapper om;
     public SecretDBFactory(final ObjectMapper om) {
         this.om = om;
-        this.table = new HashMap<>();
+        this.table = new ConcurrentHashMap<>();
         this.table.put(DB_MODE.READ.toString(), new OnDiskSecretDB(this.om));
     }
 
@@ -27,6 +27,8 @@ public class SecretDBFactory {
         if (DB_MODE.READ.equals(mode)) return this.table.get(DB_MODE.READ.toString());
 
         final String key = tenantId + mode;
+
+        // Atomic putIfAbsent
         this.table.putIfAbsent(key, new OnDiskSecretDB(this.om));
         return this.table.get(key);
     }
