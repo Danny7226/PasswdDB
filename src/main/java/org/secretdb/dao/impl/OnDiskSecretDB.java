@@ -58,12 +58,11 @@ public class OnDiskSecretDB implements SecretDB {
     }
 
     @Override
-    public void write(final String tenantId, final Payload payload) {
+    public void write(final String tenantId, final Secret secret) {
         final String filePath = HOME_DIRECTORY + "/secret_db/data/" + tenantId;
         final File dbFile = getOrCreate(filePath);
 
-        logLatencyAndExecute(arg -> updateSecrets(arg, payload), dbFile, "Write");
-        updateSecrets(dbFile, payload);
+        logLatencyAndExecute(arg -> updateSecrets(arg, secret), dbFile, "Write");
     }
 
     private <T,R> R logLatencyAndExecute(Function<T, R> func, T input, final String operationName) {
@@ -110,20 +109,20 @@ public class OnDiskSecretDB implements SecretDB {
 
     // TODO: place write lock when write to prevent dirty writes, read doesn't require lock
     // This should be mitigated as we partition tenant db into separate files already, but in case rare concurrent modification, this is needed
-    private Void updateSecrets(final File file, final Payload payload) {
+    private Void updateSecrets(final File file, final Secret toUpdate) {
 
         final List<String> updatedLines = new ArrayList<>();
-        Boolean isExisting = false;
+        boolean isExisting = false;
 
-        Secret secret;
+        Secret onFile;
         try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
             String line;
             while ((line = br.readLine()) != null) {
-                secret = om.readValue(line, Secret.class);
-                if (secret.getName().equals(payload.getName())) {
+                onFile = om.readValue(line, Secret.class);
+                if (onFile.getName().equals(toUpdate.getName())) {
                     isExisting = true;
-                    secret.setValue(payload.getValue());
-                    updatedLines.add(om.writeValueAsString(secret));
+                    onFile.setValue(toUpdate.getValue());
+                    updatedLines.add(om.writeValueAsString(onFile));
                 } else {
                     updatedLines.add(line);
                 }
@@ -132,8 +131,9 @@ public class OnDiskSecretDB implements SecretDB {
             if (!isExisting) { // if this is a new secret
                 updatedLines.add(om.writeValueAsString(
                         Secret.builder()
-                                .name(payload.getName())
-                                .value(payload.getValue())
+                                .name(toUpdate.getName())
+                                .value(toUpdate.getValue())
+                                .private_key_hash(toUpdate.getPrivate_key_hash())
                                 .build()));
             }
         } catch (final IOException e) {

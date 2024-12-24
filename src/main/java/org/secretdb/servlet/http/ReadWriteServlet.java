@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.secretdb.cryptology.Crypto;
+import org.secretdb.cryptology.SHA256;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.SecretDBFactory;
 import org.secretdb.dao.model.Secret;
@@ -79,12 +80,17 @@ public class ReadWriteServlet extends HttpServlet {
         }
 
         final Payload payload = getPayload(req);
-        payload.setValue(crypto.encrypt(payload.getKey(), payload.getValue()));
 
         final SecretDB secretDB = secretDBFactory.getSecretDB(tenantId, SecretDBFactory.DB_MODE.WRITE);
         logger.info("Using DB instance " + secretDB);
 
-        secretDB.write(tenantId, payload);
+        secretDB.write(tenantId,
+                Secret.builder()
+                        .name(payload.getName())
+                        .value(crypto.encrypt(payload.getKey(), payload.getValue()))
+                        .private_key_hash(SHA256.hash(payload.getKey()))
+                        .build());
+
         resp.getWriter().write("Write succeeded!");
     }
 

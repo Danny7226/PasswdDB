@@ -18,4 +18,7 @@ public class Secret {
 
     @JsonProperty("value")
     private String value;
+
+    @JsonProperty("private_key_hash")
+    private String private_key_hash;
 }

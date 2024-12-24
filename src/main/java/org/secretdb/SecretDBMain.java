@@ -43,7 +43,6 @@ public class SecretDBMain {
     private static void scheduleWorkerForBackupAndStartServer(final ServletContainer sc) {
         final Logger logger = LogManager.getLogger(SecretDBMain.class);
 
-        // TODO: have a clean up work that cleans up application_log more than 7 days. Backup cleanup can be dangerous as no monitoring on the in-use file.
         // Override default thread factory to create daemon thread for back-up worker as it's non-critical and shouldn't block jvm shutting up
         try (final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2, runnable -> {
             Thread thread = new Thread(runnable);
