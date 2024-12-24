@@ -20,6 +20,18 @@ For fun, it doesn't use Spring frameworks, but vanilla tomcat servlet container 
 * Log4j2 2.24.3
 
 ### Spin up server
+If you don't have jdk21 installed
+
+```
+wget https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
+
+sudo tar jdk-21_linux-x64_bin.tar.gz -C /opt/
+sudo tar -xvzf jdk-21_linux-x64_bin.tar.gz -C /opt/
+
+export JAVA_HOME=/opt/jdk-21
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
 ```
 mvn package
 
