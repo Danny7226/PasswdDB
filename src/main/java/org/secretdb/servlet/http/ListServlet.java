@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.secretdb.cryptology.CryptoUtil;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.SecretDBFactory;
 import org.secretdb.dao.model.Secret;

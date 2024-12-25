@@ -10,18 +10,18 @@
             </PatternLayout>
         </Console>
 
-        <File name="File" fileName="${sys:logfile}">
+        <RollingFile name="RollingFile" fileName="${sys:logfile}">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level: %msg%n</Pattern>
             </PatternLayout>
-        </File>
+        </RollingFile>
     </Appenders>
 
     <Loggers>
         <!-- Root Logger -->
         <Root level="INFO">
             <AppenderRef ref="STDOUT" level="WARN" />
-            <AppenderRef ref="File"/>
+            <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
 </Configuration>
