@@ -10,10 +10,19 @@
             </PatternLayout>
         </Console>
 
-        <RollingFile name="RollingFile" fileName="${sys:logfile}">
+        <RollingFile
+                name="RollingFile"
+                fileName="${sys:logfile}"
+                filePattern="${sys:user.home}/secret_db/logs/application_log.%d{yyyy_MM_dd}.gz">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level: %msg%n</Pattern>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p: %msg%n</Pattern>
             </PatternLayout>
+            <Policies>
+                <!-- Triggering policy based on file size -->
+                <!--<SizeBasedTriggeringPolicy size="10MB"/>-->
+                <!-- Triggering policy based on time (daily rotation) -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
         </RollingFile>
     </Appenders>
 

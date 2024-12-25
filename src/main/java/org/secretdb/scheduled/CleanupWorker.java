@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class CleanupWorker implements Runnable{
     private static final Logger logger = LogManager.getLogger(CleanupWorker.class);
-    private static final String APP_LOG_REGEX = "application_log.\\d{4}_\\d{2}_\\d{2}";
+    private static final String APP_LOG_REGEX = "application_log.\\d{4}_\\d{2}_\\d{2}.gz";
     private static final String APP_LOG_PATH = System.getProperty("user.home") + "/secret_db/logs";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy_MM_dd");
     private static final int CLEANUP_THRESHOLD_IN_DAYS = 2; // this is effectively deleting logs 3 days or before
@@ -62,7 +62,7 @@ public class CleanupWorker implements Runnable{
                 if (fileName.matches(APP_LOG_REGEX)) {
                     logger.info("visiting {}", file.toAbsolutePath());
                     try {
-                        final String dateStr = fileName.substring(16);  // Extract "yyyy_mm_dd" part
+                        final String dateStr = fileName.substring(16,26);  // Extract "yyyy_mm_dd" part
                         final LocalDate fileDate = LocalDate.parse(dateStr, DATE_TIME_FORMATTER);
 
                         if (fileDate.isBefore(xDaysAgo)) {
