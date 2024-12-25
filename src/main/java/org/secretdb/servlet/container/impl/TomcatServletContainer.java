@@ -26,6 +26,7 @@ public class TomcatServletContainer implements ServletContainer {
 
         final Connector connector = new Connector();
         connector.setPort(port);
+        connector.setProperty("address", "127.0.0.1"); // Restrict http traffic to localhost only
         this.tomcat.getService().addConnector(connector);
 
         this.context = this.tomcat.addContext("", new java.io.File(".").getAbsolutePath());
