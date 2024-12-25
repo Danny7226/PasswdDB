@@ -3,7 +3,7 @@ A simple server that stores secrets on-disk with server-side encryption using te
 
 For security, either use it within your localhost, or always use **https** when running this server on a remote desktop
 
-Update: I decided to disable traffic from non-localhost in [commit](https://github.com/Danny7226/SecretDB/commit/3619da12d29fb84cd48606e0a97b174902ec2c32) and made tomcat only listening for IP 127.0.0.1 on port. After this change, I recommend setting up a reverse proxy in front of this server, e.g Nginx
+*Update: I decided to disable traffic from non-localhost in [commit](https://github.com/Danny7226/SecretDB/commit/3619da12d29fb84cd48606e0a97b174902ec2c32) and made tomcat only listening for IP 127.0.0.1 on port. After this change, I recommend setting up a reverse proxy in front of this server, e.g Nginx*
 
 ### Background
 This project sets/spins up a servlet container service that stores encrypted secrets on disk.
