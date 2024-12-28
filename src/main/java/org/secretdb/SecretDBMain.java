@@ -37,10 +37,10 @@ public class SecretDBMain {
         sc.registerServlet("/api/*", readWriteServlet);
 
         // Ideally, scheduled-threads could be a separate daemon service itself. But for simplicity, having it within this project for now
-        scheduleWorkerForBackupAndStartServer(sc);
+        scheduleDaemonsAndStartServer(sc);
     }
 
-    private static void scheduleWorkerForBackupAndStartServer(final ServletContainer sc) {
+    private static void scheduleDaemonsAndStartServer(final ServletContainer sc) {
         final Logger logger = LogManager.getLogger(SecretDBMain.class);
 
         // Override default thread factory to create daemon thread for back-up worker as it's non-critical and shouldn't block jvm shutting up

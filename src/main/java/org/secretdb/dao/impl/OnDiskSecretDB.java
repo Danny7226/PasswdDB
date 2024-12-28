@@ -1,13 +1,10 @@
 package org.secretdb.dao.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.secretdb.cryptology.CryptoUtil;
 import org.secretdb.dao.SecretDB;
 import org.secretdb.dao.model.Secret;
-import org.secretdb.servlet.http.model.Payload;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,7 +37,7 @@ public class OnDiskSecretDB implements SecretDB {
 
         if (!dbFile.exists()) return Collections.emptyList();
 
-        return logLatencyAndExecute(arg -> listSecrets(arg), dbFile, "List");
+        return executeAndLogLatency(arg -> listSecrets(arg), dbFile, "List");
     }
 
     public void getFromSpecifiedFile() {
@@ -54,7 +51,7 @@ public class OnDiskSecretDB implements SecretDB {
 
         if (!dbFile.exists()) return Optional.empty();
 
-        return logLatencyAndExecute(arg -> getSecret(arg, name), dbFile, "Get");
+        return executeAndLogLatency(arg -> getSecret(arg, name), dbFile, "Get");
     }
 
     @Override
@@ -62,10 +59,10 @@ public class OnDiskSecretDB implements SecretDB {
         final String filePath = HOME_DIRECTORY + "/secret_db/data/" + tenantId;
         final File dbFile = getOrCreate(filePath);
 
-        logLatencyAndExecute(arg -> updateSecrets(arg, secret), dbFile, "Write");
+        executeAndLogLatency(arg -> updateSecrets(arg, secret), dbFile, "Write");
     }
 
-    private <T,R> R logLatencyAndExecute(Function<T, R> func, T input, final String operationName) {
+    private <T,R> R executeAndLogLatency(Function<T, R> func, T input, final String operationName) {
         final long startTime = System.currentTimeMillis();
         final R res = func.apply(input);
         final long endTime = System.currentTimeMillis();
